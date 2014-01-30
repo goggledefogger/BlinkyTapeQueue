@@ -1,14 +1,26 @@
 #!/usr/bin/env python
 
+print "importing"
 
 import feedparser
+print "1"
 import queuemanager
 import logging
 import datetime
+import time
+print "2"
 import pickle
 import os
 import imaplib
 from email.parser import HeaderParser
+print "3"
+import json
+import urllib
+import pushimap
+import sched
+import threading
+
+print "done importing"
 
 imap_server = 'imap.gmail.com'
 
@@ -33,8 +45,13 @@ def markCommandMailAsRead(conn, uid):
 	data = conn.uid('store',uid,'-FLAGS','\\Seen')
 	print 'Marked mail ' + uid + 'as read'
 	
-if __name__ == "__main__":
+def newMailFound():
+	checkMailForNewCommands()
 
+def finish():
+	print "finished"
+
+def checkMailForNewCommands():
 	print datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ': checking gmail for commands...'
 	conn = imaplib.IMAP4_SSL(imap_server)
 
@@ -71,4 +88,7 @@ if __name__ == "__main__":
 	conn.close()
 
 
+if __name__ == "__main__":
+	checkMailForNewCommands()
+	pushimap.startListening(USERNAME, PASSWORD, newMailFound)
 

@@ -6,14 +6,15 @@ import datetime
 
 logging.basicConfig()
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-channel = connection.channel()
-
-channel.queue_declare(queue='blinkytape')
-
 def addCommandToQueue(command):
-	
-	channel.basic_publish(exchange='', routing_key='blinkytape', body=command)
+	commandConnection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+	commandChannel = commandConnection.channel()
+	commandChannel.basic_publish('',
+	                      'blinkytape',
+	                      command,
+	                      pika.BasicProperties(content_type='text/plain',
+                                               delivery_mode=1))
+	commandConnection.close()
 	print "[" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "] Added '"+ command + "' command to queue"
 	
 def messageReceived(ch, method, properties, body):
@@ -21,22 +22,20 @@ def messageReceived(ch, method, properties, body):
 	command = body.lower().strip()
 	if command == "on":
 		blinkycommands.turnLightsOn()
-	if command == "blazers_start":
+	elif command == "blazers_start":
 		blinkycommands.blazersLights()
-	if command == "snowing":
+	elif command == "snowing":
 		blinkycommands.snowingLights()
 	else:
 		blinkycommands.turnLightsOn()
 	
 def startListening(callback):
-
+	connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 	print ' [*] Waiting for messages. To exit press CTRL+C'
-
-
+	channel = connection.channel()
 	channel.basic_consume(callback,
 		              queue='blinkytape',
 		              no_ack=True)
-
 	channel.start_consuming()
 	
 
