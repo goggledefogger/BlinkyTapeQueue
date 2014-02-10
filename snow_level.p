@@ -1,5 +1,5 @@
 (dp0
 S'new_snow'
 p1
-I2
+I0
 s.

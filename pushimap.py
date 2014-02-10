@@ -1,5 +1,18 @@
 import imaplib2, time
 from threading import *
+import traceback
+import sys
+import logging
+
+
+logging.basicConfig()
+
+logger = logging.getLogger('blinkylog')
+hdlr = logging.FileHandler('log.txt')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr) 
+logger.setLevel(logging.INFO)
  
 # This is the threading object that does all the waiting on 
 # the event
@@ -22,34 +35,39 @@ class Idler(object):
         self.thread.join()
  
     def idle(self):
-        # Starting an unending loop here
-        while True:
-            # This is part of the trick to make the loop stop 
-            # when the stop() command is given
-            if self.event.isSet():
-                return
-            self.needsync = False
-            # A callback method that gets called when a new 
-            # email arrives. Very basic, but that's good.
-            def callback(args):
-                if not self.event.isSet():
-                    self.needsync = True
-                    self.event.set()
-            # Do the actual idle call. This returns immediately, 
-            # since it's asynchronous.
-            self.M.idle(callback=callback)
-            # This waits until the event is set. The event is 
-            # set by the callback, when the server 'answers' 
-            # the idle call and the callback function gets 
-            # called.
-            self.event.wait()
-            # Because the function sets the needsync variable,
-            # this helps escape the loop without doing 
-            # anything if the stop() is called. Kinda neat 
-            # solution.
-            if self.needsync:
-                self.event.clear()
-                self.dosync()
+        try:
+            # Starting an unending loop here
+            while True:
+                # This is part of the trick to make the loop stop 
+                # when the stop() command is given
+                if self.event.isSet():
+                    return
+                self.needsync = False
+                # A callback method that gets called when a new 
+                # email arrives. Very basic, but that's good.
+                def callback(args):
+                    if not self.event.isSet():
+                        self.needsync = True
+                        self.event.set()
+                # Do the actual idle call. This returns immediately, 
+                # since it's asynchronous.
+                self.M.idle(callback=callback)
+                # This waits until the event is set. The event is 
+                # set by the callback, when the server 'answers' 
+                # the idle call and the callback function gets 
+                # called.
+                self.event.wait()
+                # Because the function sets the needsync variable,
+                # this helps escape the loop without doing 
+                # anything if the stop() is called. Kinda neat 
+                # solution.
+                if self.needsync:
+                    self.event.clear()
+                    self.dosync()
+        except:
+            traceback.print_exc(file=open("log.txt","a"))
+            # retry idling
+            idle(self)
  
     # The method that gets called when a new email arrives. 
     # Replace it with something better.
@@ -57,7 +75,7 @@ class Idler(object):
         self.newMailCallback()
  
 def startListening(username, password, newMailCallback):
-	print "IMAP listening"
+	logger.info("IMAP listening")
 	# Had to do this stuff in a try-finally, since some testing 
 	# went a little wrong.....
 	try:
@@ -83,7 +101,7 @@ def startListening(username, password, newMailCallback):
 	    M.logout()
 
 def callbackStub():
-	print "Callback stub"
+	logger.info("Callback stub")
 
 if __name__ == "__main__":
 	startListening("blinkytape@gmail.com", "helloroy", callbackStub)

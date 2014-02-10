@@ -17,6 +17,15 @@ snowLevelMap = {}
 
 logging.basicConfig()
 
+
+logger = logging.getLogger('blinkylog')
+hdlr = logging.FileHandler('log.txt')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr) 
+logger.setLevel(logging.INFO)
+
+
 def getLastSnowLevelFromFile():
 
 	if os.path.exists(storageFileName):
@@ -31,7 +40,6 @@ def sendCommand(command):
 	
 	
 def checkForSnow():
-	print "Checking for snow..."
 	results = json.load(urllib.urlopen("http://www.kimonolabs.com/api/bzthkqyi?apikey=d58b2fd9039564d06471e14f3064f301"))
 	newSnowString = results['results']['collection1'][0]['new_snow_string']
 	newSnowString = newSnowString.lower().split("new snow past 12 hours:")[1].strip()
@@ -39,16 +47,16 @@ def checkForSnow():
 	if existingSnowLevel == -1:
 		snowLevelMap['new_snow'] = newSnowString
 		existingSnowLevel = int(newSnowString)
-	print "Current inches: " + newSnowString + ", last time checked inches: " + str(existingSnowLevel)
 	if int(newSnowString) > existingSnowLevel:
-		print "There was new snow!"
+		logger.info("There was new snow!")
+		logger.info("Current inches: " + newSnowString + ", last time checked inches: " + str(existingSnowLevel))
 		sendCommand('snowing')
 	snowLevelMap['new_snow'] = int(newSnowString)	
 	pickle.dump(snowLevelMap, open(storageFileName, "wb"))
 	
 if __name__ == "__main__":
 
-	print "Scheduling snow checker..."
+	logger.info("Scheduling snow checker...")
 	while True:
 		checkForSnow()
 		time.sleep(checkIntervalInSeconds)
