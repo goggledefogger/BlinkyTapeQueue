@@ -11,6 +11,7 @@ BlinkyTape Queue
 
 * Create a Gmail account that can be used to trigger actions by email
 * Update the Gmail username/password in checkgmail.py with your new credentials
+* Install and run rabbitmq-server
 * Connect the BlinkyTape with USB
 * Start the message queue listening by running blinkystart.sh
 * Use IFTTT (or any other service) to send emails to that account with the subject of the form:
@@ -29,6 +30,7 @@ Uses the BlinkyTape python library modified [here](http://projects.mattdyson.org
 ### Contribution guidelines ###
 
 * Please contribute!
+* If you're testing and just want to try sending a command, run `python queuemanager.py` and in a new process then run `python sendcommand.py <command_name>`
 
 ### Who do I talk to? ###
 
