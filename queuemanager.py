@@ -33,6 +33,7 @@ def messageReceived(ch, method, properties, body):
 	elif command == "snowing":
 		blinkycommands.snowingLights()
 	else:
+		logger.info('unrecognized command, just turn them on')
 		blinkycommands.turnLightsOn()
 	
 def startListening(callback):
