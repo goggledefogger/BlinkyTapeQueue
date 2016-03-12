@@ -7,11 +7,12 @@ import datetime
 logging.basicConfig()
 
 logger = logging.getLogger('blinkylog')
-hdlr = logging.FileHandler('log.txt')
-formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-hdlr.setFormatter(formatter)
-logger.addHandler(hdlr) 
-logger.setLevel(logging.INFO)
+if not logger.handlers:
+    hdlr = logging.FileHandler('log.txt')
+    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    hdlr.setFormatter(formatter)
+    logger.addHandler(hdlr) 
+    logger.setLevel(logging.INFO)
 
 def addCommandToQueue(command):
 	commandConnection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))

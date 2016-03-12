@@ -8,11 +8,12 @@ import logging
 logging.basicConfig()
 
 logger = logging.getLogger('blinkylog')
-hdlr = logging.FileHandler('log.txt')
-formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-hdlr.setFormatter(formatter)
-logger.addHandler(hdlr) 
-logger.setLevel(logging.INFO)
+if not logger.handlers:
+    hdlr = logging.FileHandler('log.txt')
+    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    hdlr.setFormatter(formatter)
+    logger.addHandler(hdlr) 
+    logger.setLevel(logging.INFO)
  
 # This is the threading object that does all the waiting on 
 # the event
