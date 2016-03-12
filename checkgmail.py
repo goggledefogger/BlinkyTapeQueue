@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 import feedparser
 import queuemanager
 import logging
@@ -29,7 +30,7 @@ logger.setLevel(logging.INFO)
 logger.info("Starting gmail listener...")
 
 USERNAME = "blinkytape@gmail.com"
-PASSWORD = "helloroy"
+PASSWORD = "blinkyroy"
 
 storageFileName = 'completed_commands.p'
 

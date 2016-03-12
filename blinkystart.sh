@@ -8,4 +8,4 @@ kill $(ps aux | grep 'python checkforsnow.py' | awk '{ print $2 }')
 python queuemanager.py &
 python commandhttpserver.py &
 python checkgmail.py &
-python checkforsnow.py &
+#python checkforsnow.py &
