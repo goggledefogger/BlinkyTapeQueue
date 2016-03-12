@@ -74,7 +74,7 @@ class Idler(object):
     def dosync(self):
         self.newMailCallback()
  
-def startListening(username, password, newMailCallback):
+def startListening(username, password, newMailCallback, retry=False):
 	logger.info("IMAP listening")
 	# Had to do this stuff in a try-finally, since some testing 
 	# went a little wrong.....
@@ -99,9 +99,9 @@ def startListening(username, password, newMailCallback):
 	    M.close()
 	    # This is important!
 	    M.logout()
+            if retry:
+                logger.info("connection closed, retrying...")
+                startListening(username, password, newMailCallback, True)
 
 def callbackStub():
 	logger.info("Callback stub")
-
-if __name__ == "__main__":
-	startListening("blinkytape@gmail.com", "helloroy", callbackStub)

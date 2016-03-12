@@ -92,5 +92,5 @@ def checkMailForNewCommands():
 
 if __name__ == "__main__":
 	checkMailForNewCommands()
-	pushimap.startListening(USERNAME, PASSWORD, newMailFound)
+	pushimap.startListening(USERNAME, PASSWORD, newMailFound, True)
 
