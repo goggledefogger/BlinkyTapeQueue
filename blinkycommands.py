@@ -91,6 +91,16 @@ def snowingLights():
 	time.sleep(60)
 	turnLightsOff()
 
+def calendarEventAddedLights(date):
+	for i in range(0,bt.getSize()):
+		if i % 2 == 0:
+			bt.setPixel(i,0,0,0)
+		else:
+			bt.setPixel(i,0, 255, 0)
+	bt.sendUpdate()
+	time.sleep(30)
+	turnLightsOff()
+
 def turnLightsOn():
 	
 	blocks = [

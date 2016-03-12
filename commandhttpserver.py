@@ -5,6 +5,7 @@ import logging
 import time
 import BaseHTTPServer
 import re
+import urlparse
 
 logging.basicConfig()
 
@@ -28,9 +29,14 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
   def do_GET(s):
       """Respond to a GET request: """ + s.path
 
-      matchObj = re.match(r'\/lights\?command=(.*)', s.path)
-      if matchObj:
-        command = matchObj.group(1)
+      params = urlparse.parse_qs(urlparse.urlparse(s.path).query)
+      if 'command' in params:
+        command = params["command"][0]
+        if (command == "calendar"):
+          command += " "
+          for key,value in params.items():
+            if (key != "command"):
+              command += key + "=" + value[0] + ";"
         logger.info('sending command: ' + command)
         queuemanager.addCommandToQueue(command)
 
