@@ -49,17 +49,16 @@ lifelineMap = {
 loaded = False
 
 def start():
+	global lifelineMap
 	diskData = loadFromFile()
 	if (diskData is not None):
-		print diskData
 		lifelineMap = diskData
 	loaded = True
-	return lifelineMap
 
 def addCalendarEvent(id, unixDateString):
+	global lifelineMap
 	if (not loaded):
-		lifelineMap = start()
-	print lifelineMap
+		start()
 	unixDate = int(unixDateString)
 	lifelineMap['eventsById'][id] = {'id': id, 'date': unixDate}
 	weekIndex = calculateWeekIndex(unixDate)
@@ -68,9 +67,9 @@ def addCalendarEvent(id, unixDateString):
 		lifelineMap['eventsByWeek'][weekIndex] = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}} 
 	
 	if unixDate not in lifelineMap['eventsByWeek'][weekIndex][dayIndex]:
-		lifelineMap['eventsByWeek'][weekIndex][dayIndex][unixDate] = {}
+		lifelineMap['eventsByWeek'][weekIndex][dayIndex][unixDate] = []
 
-	lifelineMap['eventsByWeek'][weekIndex][dayIndex][unixDate] = id
+	lifelineMap['eventsByWeek'][weekIndex][dayIndex][unixDate].append(id)
 	saveToFile(lifelineMap)
 	startCalendarLights()
 
