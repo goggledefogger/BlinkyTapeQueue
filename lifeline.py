@@ -51,17 +51,19 @@ loaded = False
 def start():
 	diskData = loadFromFile()
 	if (diskData is not None):
+		print diskData
 		lifelineMap = diskData
 	loaded = True
+	return lifelineMap
 
 def addCalendarEvent(id, unixDateString):
 	if (not loaded):
-		start()
+		lifelineMap = start()
+	print lifelineMap
 	unixDate = int(unixDateString)
 	lifelineMap['eventsById'][id] = {'id': id, 'date': unixDate}
 	weekIndex = calculateWeekIndex(unixDate)
 	dayIndex = calculateDayIndex(unixDate)
-	print dayIndex
 	if weekIndex not in lifelineMap['eventsByWeek']:
 		lifelineMap['eventsByWeek'][weekIndex] = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}} 
 	
