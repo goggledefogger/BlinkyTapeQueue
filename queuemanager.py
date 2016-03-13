@@ -2,6 +2,7 @@
 import pika
 import logging
 import blinkycommands
+import lifeline
 import datetime
 import urlparse
 
@@ -28,12 +29,15 @@ def addCommandToQueue(command):
 def messageReceived(ch, method, properties, body):
 	logger.info("[" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "] Received %r" % (body,))
 	command = body.lower().strip()
+	if command.startswith("'"):
+		command = command.replace("'", "")
 
 	if command.startswith("calendar"):
 		options = command.split("calendar ",1)[1]
 		optionsParams = urlparse.parse_qs(options)
 		date = optionsParams['date'][0]
-		blinkycommands.calendarEventAddedLights(date)
+		id = optionsParams['id'][0]
+		lifeline.addCalendarEvent(id, date)
 	elif command == "on":
 		blinkycommands.turnLightsOn()
 	elif command == "blazers_start":
