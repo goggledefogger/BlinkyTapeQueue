@@ -1,4 +1,3 @@
 log.txt
-snow_level.p
-completedcommands.p
+*.p
 *.pyc
