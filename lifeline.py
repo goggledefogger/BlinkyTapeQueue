@@ -7,6 +7,8 @@ import glob
 import os
 import pickle
 import datetime
+import calendar
+import re
 
 logging.basicConfig()
 
@@ -55,10 +57,34 @@ def start():
 		lifelineMap = diskData
 	loaded = True
 
-def addCalendarEvent(id, unixDateString):
+def addCalendarEvent(id, dateString):
 	global lifelineMap
 	if (not loaded):
 		start()
+
+
+	# formatted by IFTTT like this: March 13, 2016 at 01:00pm
+	matchObj = re.match(r'(.*?) ([0-9]+), ([0-9]+) at (.*)', dateString)
+	if matchObj:
+		monthString = matchObj.group(1)
+		dayInt = matchObj.group(2)
+		yearInt = matchObj.group(3)
+		timeString = matchObj.group(4)
+		#formattedDateString = monthString + ' ' + dayInt + ' ' + yearInt + ' ' + 'timeString'
+		format = '%B %d, %Y at %I:%M%p'
+		print 'ifttt date: ' + dateString
+		dateObj = datetime.datetime.strptime(dateString, format)
+		unixDateString = str(calendar.timegm(dateObj.timetuple()))
+	else:
+		# formatted as a unix timestamp with 10 digits
+		unixMatchObj = re.match(r'[0-9]{10}', dateString)
+		if unixMatchObj:
+			print 'unix: ' + dateString
+			unixDateString = dateString
+		else:
+			print 'unknown date format, ignoring: ' + dateString
+			return
+
 	unixDate = int(unixDateString)
 	lifelineMap['eventsById'][id] = {'id': id, 'date': unixDate}
 	weekIndex = calculateWeekIndex(unixDate)
