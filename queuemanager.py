@@ -17,7 +17,8 @@ if not logger.handlers:
     logger.setLevel(logging.INFO)
 
 def addCommandToQueue(command):
-	commandConnection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+	commandConnection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost',
+																																	heartbeat_interval=0))
 	commandChannel = commandConnection.channel()
 	commandChannel.queue_declare(queue='blinkytape')
 	commandChannel.basic_publish(exchange='',

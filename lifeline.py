@@ -130,7 +130,6 @@ def loadFromFile():
 
 def saveToFile(data):
 	pickle.dump(data, open(storageFileName, "wb"))
-	print data
 
 
 start()
