@@ -17,8 +17,8 @@ if not logger.handlers:
     logger.setLevel(logging.INFO)
 
 def addCommandToQueue(command):
-	commandConnection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost',
-																																	heartbeat_interval=0))
+	commandConnection = pika.BlockingConnection(pika.ConnectionParameters(host='127.0.0.1',
+																																	heartbeat_interval=1))
 	commandChannel = commandConnection.channel()
 	commandChannel.queue_declare(queue='blinkytape')
 	commandChannel.basic_publish(exchange='',
@@ -45,12 +45,14 @@ def messageReceived(ch, method, properties, body):
 		blinkycommands.blazersLights()
 	elif command == "snowing":
 		blinkycommands.snowingLights()
+	elif command == "camera_triggered":
+		blinkycommands.snowingLights()
 	else:
 		logger.info('unrecognized command, just turn them on')
 		blinkycommands.turnLightsOn()
 	
 def startListening(callback):
-	connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+	connection = pika.BlockingConnection(pika.ConnectionParameters('127.0.0.1'))
 	logger.info(' [*] Waiting for messages. To exit press CTRL+C')
 	channel = connection.channel()
 	channel.queue_declare(queue='blinkytape')

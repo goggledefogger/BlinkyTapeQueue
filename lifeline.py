@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from BlinkyTapeV2 import BlinkyTape
+import sys
 import logging
 import time
 import glob
@@ -12,8 +13,20 @@ import re
 
 logging.basicConfig()
 
-serialPorts = glob.glob("/dev/ttyACM*")
-port = serialPorts[0]
+if sys.platform.startswith('win'):
+    serialPorts = ['COM%s' % (i + 1) for i in range(256)]
+elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+    # this excludes your current terminal "/dev/tty"
+    serialPorts = glob.glob('/dev/tty[A-Za-z]*')
+elif sys.platform.startswith('darwin'):
+    serialPorts = glob.glob('/dev/tty.*')
+else:
+    raise EnvironmentError('Unsupported platform')
+
+for thisPort in serialPorts:
+	if 'usb' in thisPort:
+			port = thisPort
+
 bt = BlinkyTape(port)
 
 storageFileName = 'lifeline.p'

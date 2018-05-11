@@ -68,7 +68,7 @@ def checkMailForNewCommands():
 	(retcode, messages) = conn.uid('search', None, '(UNSEEN)')
 	if retcode == 'OK':
 	    for uid in messages[0].split():
-		logger.info('Found an undread message with id: ' + uid)
+		logger.info('Found an unread message with id: ' + uid)
 		data = conn.uid('fetch', uid, '(BODY[HEADER])')
 		header_data = data[1][0][1]
 		parser = HeaderParser()
